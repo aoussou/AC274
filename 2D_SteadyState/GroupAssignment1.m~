@@ -1,0 +1,87 @@
+% Driver Group Assignment 1
+% AC274 spring 2014
+% Group Assignment 1
+% Sydney Sroka and John Aoussou
+
+clear all; clc; close all
+addpath('distmesh/');
+
+Globals2D;
+p = 2; %maximum degree of basis function
+
+%% set up domain
+figure
+fd=@(p) ddiff(drectangle(p,-1,1,-1,1),dcircle(p,0,0,0.5));
+fh=@(p) 0.05+0.3*dcircle(p,0,0,0.5);
+[P,t]=distmesh2d(fd,fh,0.02,[-1,-1;1,1],[-1,-1;-1,1;1,-1;1,1]);
+% t is Kx3 matrix of the numbering of global nodes for each element
+% p is the coordinates
+
+K = length(t); %number of triangular elements
+
+%==========================================================================
+%% Part a
+%{
+close all
+for meshSize = [0.08 0.06 0.04] 
+figure
+[P,t]=distmesh2d(fd,fh,meshSize,[-1,-1;1,1],[-1,-1;-1,1;1,-1;1,1]);
+hold on
+plot(linspace(0,1,10),zeros(1,10),'k')
+plot(zeros(1,10),linspace(0,1,10),'k')
+text(-.1,-.1,'(0,0)')
+text(1.1,0,'(1,0)')
+text(0,1.1,'(0,1)')
+end
+%}
+%==========================================================================
+%% Part b
+
+%% Compute the area of the domain
+% compute the jacobian of each element
+
+detJ = zeros(K,1);
+A = 0;
+
+for elem_id = 1:K
+    
+    %obtain the global number of each vertex of each of the element and their
+    %coordinates
+    
+    n1 = t(elem_id,1);
+    n1x = P(n1,1);
+    n1y = P(n1,2);
+    
+    n2 = t(elem_id,2);
+    n2x = P(n2,1);
+    n2y = P(n2,2);
+    
+    n3 = t(elem_id,3);
+    n3x = P(n3,1);
+    n3y = P(n3,2);
+    
+    J = [n2x - n1x , n3x - n1x;
+        n2y - n1y , n3y - n1y];
+    
+    detJ(elem_id) = det(J);
+    
+    A = A + detJ(elem_id)/2;
+end
+
+
+%==========================================================================
+%% Part c
+GA1c;
+%==========================================================================
+%% Part d
+GA1d;
+%==========================================================================
+%% Part e
+GA1e;
+%==========================================================================
+
+
+
+
+
+
